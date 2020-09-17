@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Peyshine">
+  <meta name="keywords" content="">
+  <title>集成.NET Core+Swagger+Consul+Polly+Ocelot+IdentityServer4+Exceptionless+Apollo的微服务开发框架 - 沛山博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>沛山博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-05-10 22:22">
+      2020年5月10日 晚上
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.7k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      17
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <h1 id="集成-NET-Core-Swagger-Consul-Polly-Ocelot-IdentityServer4-Exceptionless-Apollo的微服务开发框架"><a href="#集成-NET-Core-Swagger-Consul-Polly-Ocelot-IdentityServer4-Exceptionless-Apollo的微服务开发框架" class="headerlink" title="集成.NET Core+Swagger+Consul+Polly+Ocelot+IdentityServer4+Exceptionless+Apollo的微服务开发框架"></a>集成.NET Core+Swagger+Consul+Polly+Ocelot+IdentityServer4+Exceptionless+Apollo的微服务开发框架</h1><h2 id="Github源代码地址"><a href="#Github源代码地址" class="headerlink" title="Github源代码地址"></a>Github源代码地址</h2><p><a href="https://github.com/PeyShine/Demo.MicroServer" target="_blank" rel="noopener">https://github.com/PeyShine/Demo.MicroServer</a></p>
+<h2 id="Apollo配置中心"><a href="#Apollo配置中心" class="headerlink" title="Apollo配置中心"></a>Apollo配置中心</h2><p>Apollo（阿波罗）是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景。<br>由于各个项目配置都需要读取基础的配置信息，这边在内网的Centos(101)上部署了Apollo的环境，并为项目添加了一些基础配置信息，配置如图<br><img src="/images/demomicroserver/apollo.png" srcset="/img/loading.gif" alt="1"></p>
+<h2 id="Consul"><a href="#Consul" class="headerlink" title="Consul"></a>Consul</h2><p>Consul是一种服务网格解决方案，提供具有服务发现，健康检查，Key/Value存储，多数据中心等功能。<br>在内网101启动Consul服务，这里为了测试，直接在本地将用户服务实例分别在三个端口启动起来，实际生产中这些服务可能部署在不同的机房不同的机器，他们之间组成一个服务的集群，服务提供一个心跳检测的方法，用于consul定时检测服务实例是否健康，启动时在consul中进行一次注册，这个就是经常说的‘服务注册与发现’中的服务注册，三个服务实例截图如下<br><img src="/images/demomicroserver/serviceRsg.png" srcset="/img/loading.gif" alt="2"><br>注册完成之后打开consul的ui界面可以看到，列表中存在多出一个用户服务的集群组名称：Demo.MicroServer.UserService，如图<br><img src="/images/demomicroserver/consul_main.png" srcset="/img/loading.gif" alt="3"><br>点击Demo.MicroServer.UserService进去之后如图，显示三个服务实例的信息<br><img src="/images/demomicroserver/consul_service_instance_list.png" srcset="/img/loading.gif" alt="4"></p>
+<h2 id="Swagger"><a href="#Swagger" class="headerlink" title="Swagger"></a>Swagger</h2><p>Swagger提供了一个可视化的UI页面展示描述文件。接口的调用方、测试等都可以在该页面中对相关接口进行查阅和做一些简单的接口请求。当然Swagger的功能远不止这些，项目中已经在服务实例中接入swagger，如图<br><img src="/images/demomicroserver/swagger_port_6891.png" srcset="/img/loading.gif" alt="5"><br><img src="/images/demomicroserver/swagger_port_6892.png" srcset="/img/loading.gif" alt="6"><br><img src="/images/demomicroserver/swagger_port_6893.png" srcset="/img/loading.gif" alt="7"><br>因为三个服务实例是同样一份代码，所以可以看到打开三个端口的swagger地址，看到的接口信息完全一致。</p>
+<h2 id="Ocelot-网关"><a href="#Ocelot-网关" class="headerlink" title="Ocelot 网关"></a>Ocelot 网关</h2><p>Ocelot是一个.NET API网关，它提供了路由,请求聚合,服务发现、鉴权、限流熔断、负载均衡器等一系列强大的功能，而这些功能只需要在配置文件中完成即可使用.<br>比如上面的swagger，我们在三个服务实例的端口打开都可以看到api相关文档信息，但是我们能否在api网关中直接集成呢，答案是肯定的，这依赖于ocelot强大的路由功能，如图，简单的几行配置，我们便将swagger配置到了网关当中<br><img src="/images/demomicroserver/ocelot_config_swagger.png" srcset="/img/loading.gif" alt="8"></p>
+<p>网关内置的负载均衡器的使用，如图我在网关中对同一个接口进行了三次调用，可以看到结果分别来自三个不同的端口中，因为我选用了负载均衡器中的轮询策略<br><img src="/images/demomicroserver/ocelot_LoadBalancer_6891.png" srcset="/img/loading.gif" alt="9"><br><img src="/images/demomicroserver/ocelot_LoadBalancer_6892.png" srcset="/img/loading.gif" alt="10"><br><img src="/images/demomicroserver/ocelot_LoadBalancer_6893.png" srcset="/img/loading.gif" alt="11"></p>
+<p>限流策略，当我们配置启用限流策略，并配置单位时间内访问次数限制时，然后快速刷新接口，超过设置的次数限制，那么可以看到按照错误提示出现<br><img src="/images/demomicroserver/ocelot_RateLimit.png" srcset="/img/loading.gif" alt="12"></p>
+<h2 id="Expectationless"><a href="#Expectationless" class="headerlink" title="Expectationless"></a>Expectationless</h2><p>Exceptionless 是一个开源的实时的日志收集框架，相信在微服务架构或者分布式应用应该都离不开一个统一的日志收集功能，Exceptionless就是就很好的提供了服务，相信有很多开发者都在使用ELK来完成日志的收集，这里说下Exceptionless底层也是基于ElasticSearch，<br>Exceptionless提供了两种服务方式，一种是在线的，就是直接在官网注册账户，新建项目，官方会给每个项目分配一个appid，将id配置到项目中即可使用，当然，在线使用是有限制的，对日志收集数量(3000)还有存储时间天数(3天)都有限制，测试或者临时使用应该都没问题，<br>考虑到后面项目会在生产环境中使用，所以我在内网centos上搭建了一个本地化的Exceptionless环境来收集日志。<br>我这里调用一下swagger中写的一个异常收集测试的接口<br><img src="/images/demomicroserver/swagger_exceptionless_collect.png" srcset="/img/loading.gif" alt="13"><br>发送完成后，到Exceptionless的ui界面来查看收集情况<br><img src="/images/demomicroserver/exceptionless_show.png" srcset="/img/loading.gif" alt="14"><br>可以看到界面多出一条发送测试的数据记录</p>
+<h2 id="IdentityServer4统一鉴权中心"><a href="#IdentityServer4统一鉴权中心" class="headerlink" title="IdentityServer4统一鉴权中心"></a>IdentityServer4统一鉴权中心</h2><p>之所有将认证授权放在最后，因为没有这个前面的流程也是可以跑通的，测试的时候如果觉得这部分测试麻烦可以先注释掉，流程跑通后再来集成这个，这个东西的用法还是很多的，这里将IdentityServer4集成到api 网关当中来完成统一的认证鉴权。<br>在identityserver4项目中分别实现以下几个类<br><img src="/images/demomicroserver/identityserver4_starup.png" srcset="/img/loading.gif" alt="15"><br>分类来完全几个东西：定义api资源，客户端访问资源范围，校验账户密码过程和数据返回格式<br>然后在api网关中项目中统一认证，这里需要说明下为什么要将IdentityServer4集成到网关当中而不是在每个服务实例单独去认证，想象一下，如果在一个大型项目中，不同的小组维护着不同的服务实例，势必每个小组都要在各自的代码中完成一套认证逻辑，确实没有必要，<br>而Ocelot天然对IdentityServer4进行了很好的集成，我们只需要在网关中统一添加认证代码即可，而各个微服务实例只需要关心各自的业务逻辑代码即可。<br>这个也列举一下使用过程，在客户端没有token时通过网关对api资源进行访问，可以看到如图的返回状态码：401<br><img src="/images/demomicroserver/401.png" srcset="/img/loading.gif" alt="16"><br>然后我们到IdentityServer4中请求一个token<br><img src="/images/demomicroserver/identityserver4_token.png" srcset="/img/loading.gif" alt="17"><br>拿到token后，带着token再通过网关请求相同的api资源，可以看到正确拿到想要的资源。<br><img src="/images/demomicroserver/identityserver4_bearer_token.png" srcset="/img/loading.gif" alt="18"></p>
+<h2 id="特别说明"><a href="#特别说明" class="headerlink" title="特别说明"></a>特别说明</h2><p>上面的所有说明，在代码中均有体现，并开放出来，但是对于一个完整的微服务架构来说还是太简略，只是做了简单的说明，后续会具体拆开来分享一下。<br>至于为什么要这么做和工具的安装，博客园等地方有很多这方面的对比和教程可以参考，这里着重关注微服务架构的实现<br><br>欢迎大家提出宝贵意见，当然如果对你有帮助也欢迎star.<br></p>
+<h2 id="后续更新"><a href="#后续更新" class="headerlink" title="后续更新"></a>后续更新</h2><p>后续可能还会加入CAP和APM(已加入)</p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+                    
+                      <a class="hover-with-bg" href="/tags/NetCore/">.NetCore</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Swagger/">Swagger</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Consul/">Consul</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Polly/">Polly</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Ocelot/">Ocelot</a>
+                    
+                      <a class="hover-with-bg" href="/tags/IdentityServer4/">IdentityServer4</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Exceptionless/">Exceptionless</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Apollo/">Apollo</a>
+                    
+                      <a class="hover-with-bg" href="/tags/SkyWalking/">SkyWalking</a>
+                    
+                      <a class="hover-with-bg" href="/tags/SkyWalking-dotnet/">SkyWalking-dotnet</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">作者：沛山<br>出处： <a href="http://www.liuthing.com" target="_blank" rel="noopener">http://www.liuthing.com</a> <br> 本文版权归作者所有有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接。希望能够持续的为大家带来好的技术文章，关注我吧！<br> <img style="width:100%; height:500px margin-top:15px;" src="http://liuthing.com/images/hexo01/qrcode.jpg" srcset="/img/loading.gif" alt="公众号：DotNetCore开源学习"></p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/05/12/dockerinstall/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Docker在centos上的安装与常用命令大全</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <div class="comments" id="comments">
+                
+                
+  <div id="vcomments"></div>
+  <script type="text/javascript">
+    function loadValine() {
+      addScript('https://cdn.staticfile.org/valine/1.4.14/Valine.min.js', function () {
+        new Valine({
+          el: "#vcomments",
+          app_id: "JfSAuL4w4fcF33IoC85mH0xl-gzGzoHsz",
+          app_key: "uo0xL8US0yTQX55tV56brYh3",
+          placeholder: "吐槽",
+          path: window.location.pathname,
+          avatar: "retro",
+          meta: ["nick","mail","link"],
+          pageSize: "10",
+          lang: "zh-CN",
+          highlight: false,
+          recordIP: false,
+          serverURLs: "https://jfsaul4w.lc-cn-n1-shared.com",
+        });
+      });
+    }
+    createObserver(loadValine, 'vcomments');
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://valine.js.org" target="_blank" rel="nofollow noopener noopener">comments
+      powered by Valine.</a></noscript>
+
+
+              </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'true' === 'true',
+      loop: 'all',
+      order: 'list',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"年少有为","artist":"李荣浩","url":"/songs/nianshaoyouwei.mp3","cover":"/img/nianshaoyouwei.png"},{"name":"桃花诺","artist":"G.E.M-邓紫棋","url":"/songs/taohuanuo.mp3","cover":"/img/taohuanuo.png"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "集成.NET Core+Swagger+Consul+Polly+Ocelot+IdentityServer4+Exceptionless+Apollo的微服务开发框架&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 100,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?0960db9acd004649f7fa979ca537a2f8";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+    <!-- Google Analytics -->
+    <script defer>
+      (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+          (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+          m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'UA-178263457-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+</body>
+</html>

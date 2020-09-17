@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Peyshine">
+  <meta name="keywords" content="">
+  <title>在微服务框架Demo.MicroServer中添加SkyWalking+SkyApm-dotnet分布式链路追踪系统 - 沛山博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>沛山博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-05-16 21:15">
+      2020年5月16日 晚上
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      13
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <h2 id="1-APM工具的选取"><a href="#1-APM工具的选取" class="headerlink" title="1.APM工具的选取"></a>1.APM工具的选取</h2><p>Apm监测工具很多，这里选用网上比较火的一款Skywalking。<br>Skywalking是一个应用性能监控(APM)系统，Skywalking分为服务端Oap、管理界面UI、以及嵌入到程序中的探针Agent部分，大概工作流程就是在程序中添加探针采集各种数据发送给服务端保存，然后在UI界面可以看到收集过来的各种监测数据，来完成它的核心使命：性能监控和分布式调用链追踪能力。下图是skywalking官方的一个图，也可以说明这三者之间的关联关系<br><img src="/images/skywalking/1.png" srcset="/img/loading.gif" alt="1"></p>
+<h2 id="2-服务端-OAP-和界面-UI-的安装"><a href="#2-服务端-OAP-和界面-UI-的安装" class="headerlink" title="2.服务端(OAP)和界面(UI)的安装"></a>2.服务端(OAP)和界面(UI)的安装</h2><p>这里直接在apache地址：<a href="http://skywalking.apache.org/downloads/" target="_blank" rel="noopener">http://skywalking.apache.org/downloads/</a> 下载了一个6.6.0版本的zip文件，由于之前在本地的windows上安装过，发现安装包里面有两个启动文件，分别为：startup.bat和startup.sh，分别用于window上启动和linux启动，这里我直接将之前下载好的上传到linux上来安装。<br><img src="/images/skywalking/2.png" srcset="/img/loading.gif" alt="2"></p>
+<p>上传后解压缩，就会得到以下截图的几个文件<br><img src="/images/skywalking/3.png" srcset="/img/loading.gif" alt="3"></p>
+<p>进入到config配置目录下面，有一个名称叫application.yml的文件<br><img src="/images/skywalking/4.png" srcset="/img/loading.gif" alt="4"></p>
+<p>对这个配置文件进行编辑 vim application.yml<br><img src="/images/skywalking/5.png" srcset="/img/loading.gif" alt="5"></p>
+<p>我们直接定位到数据存储部分，也就是节点storage，官方文档里面也有说明，为了方便快速入门，配置文件默认采用的是H2存储，但是推荐使用ElasticSearch存储，由于之前我安装过Exceptionless，在这台机器上已经安装过elasticsearch(如果没有安装过可以网上找下，有很多这方面的文章)，所以我这里将H2部分注释掉，然后将elasticsearch部分放开，并修改红色方框里的两个配置文件：</p>
+<pre><code class="hljs groovy"><span class="hljs-string">nameSpace:</span> $&#123;<span class="hljs-string">SW_NAMESPACE:</span><span class="hljs-string">"exceptionless"</span>&#125;
+<span class="hljs-string">clusterNodes:</span> $&#123;<span class="hljs-string">SW_STORAGE_ES_CLUSTER_NODES:</span><span class="hljs-string">localhost:</span><span class="hljs-number">9300</span>&#125;</code></pre>
+<p>需要注意的是：第一个SW_NAMESPACE需要与ElasticSearch配置的cluster_name名称一致</p>
+<p>启动skywalking会占用四个端口：8080，10800，11800，12800，由于我本机安装过apollo，8080ui端口已经被占用，所以这里我必须要先修改UI界面使用的8080端口才能启动它。<br>开始修改UI界面使用的8080端口（如果你的8080端口并没有被占用，可以跳过，不用修改）<br>回到配置目录的上一级：cd ..<br>可以看到一个webapp的文件夹<br><img src="/images/skywalking/6.png" srcset="/img/loading.gif" alt="6"></p>
+<p>进入这个目录：cd webapp/<br>然后对webapp.yml文件进行修改<br><img src="/images/skywalking/7.png" srcset="/img/loading.gif" alt="7"></p>
+<p>这里我将原来server界面下面的port从8080改到8088，然后保存<br><img src="/images/skywalking/8.png" srcset="/img/loading.gif" alt="8"></p>
+<p>配置文件修改完了，开始启动skywalking的服务端和UI界面，启动脚本放在目录：apache-skywalking-apm-bin/bin 里面<br><img src="/images/skywalking/9.png" srcset="/img/loading.gif" alt="9"></p>
+<p>上面有说到startup.bat和startup.sh分别用在windows上和linux上启动，这里用./startup.sh<br><img src="/images/skywalking/10.png" srcset="/img/loading.gif" alt="10"></p>
+<p>启动命令执行完成之后可以看到OAP和Web两个项目启动成功的提示，也就是我们说的服务端和UI界面。<br>验证一下，通过配置的ip+8088端口(如果没有修改则是默认的8080)来访问一下界面，如图：<br><img src="/images/skywalking/11.png" srcset="/img/loading.gif" alt="11"></p>
+<p>至此，我们准备工作做完了，下面我们在程序中安装探针，来采集数据.</p>
+<h2 id="3-安装探针-Agent-采集数据"><a href="#3-安装探针-Agent-采集数据" class="headerlink" title="3.安装探针(Agent)采集数据"></a>3.安装探针(Agent)采集数据</h2><p>由于Skywalking本身是采用java编写的，所以SkyApm-dotnet这个项目就是专门为 .NET 开发的探针，目前支持 ASP.NET Core 以及 ASP.NET，下面我们将SkyApm-dotnet无侵入式的集成到.Net Core实现的微服务项目中</p>
+<p>第一步：使用下面的命令来进行 Agent 的安装，这里据说需要以管理员身份运行</p>
+<pre><code class="hljs routeros">dotnet<span class="hljs-built_in"> tool </span>install -g SkyAPM.DotNet.CLI</code></pre>
+
+<p>第二步：添加环境变量，可以直接在launchSettings.json文件中添加以下代码来设置</p>
+<pre><code class="hljs 1c"><span class="hljs-string">"environmentVariables"</span>: &#123;
+    <span class="hljs-string">"ASPNETCORE_ENVIRONMENT"</span>: <span class="hljs-string">"Development"</span>,
+    <span class="hljs-string">"ASPNETCORE_HOSTINGSTARTUPASSEMBLIES"</span>: <span class="hljs-string">"SkyAPM.Agent.AspNetCore"</span>,
+    <span class="hljs-string">"SKYWALKING__SERVICENAME"</span>: <span class="hljs-string">"Demo.MicroServer.UserService"</span>
+&#125;</code></pre>
+
+<p>第三步：在程序中安装NuGet包：SkyAPM.Agent.AspNetCore</p>
+<p>第四步：在应用程序根目录下使用以下命令生成skyapm.json的配置文件，[service name]替换为服务的名称，[server]替换为Skywalking安装的计器ip</p>
+<pre><code class="hljs routeros">dotnet skyapm<span class="hljs-built_in"> config </span>[service name] [server]:11800</code></pre>
+<p><img src="/images/skywalking/12.png" srcset="/img/loading.gif" alt="12"><br>执行完成之后可以看到目录下面已经生成了一个skyapm.json的文件，将其属性复制到输出目录设置为如果较新则复制，我这里是用之前发布在github上的微服务框架中的一个实例来测试的，所有代码均已上传，需要的可以通过页Github地址获取代码:<a href="https://github.com/PeyShine/Demo.MicroServer" target="_blank" rel="noopener">https://github.com/PeyShine/Demo.MicroServer</a></p>
+<h2 id="4-采集数据并查看"><a href="#4-采集数据并查看" class="headerlink" title="4.采集数据并查看"></a>4.采集数据并查看</h2><p>在Swagger中随便调用几个接口来测试数据的采集情况，然后到UI界面查看数据，流程顺利的话，可以看到数据已经都有采集到<br><img src="/images/skywalking/13.png" srcset="/img/loading.gif" alt="13"><br><img src="/images/skywalking/14.png" srcset="/img/loading.gif" alt="14"></p>
+<p>基本工作都已经完成，这个里面还有很多玩法，快动手试试吧。</p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+                    
+                      <a class="hover-with-bg" href="/tags/SkyWalking/">SkyWalking</a>
+                    
+                      <a class="hover-with-bg" href="/tags/netcore/">.netcore</a>
+                    
+                      <a class="hover-with-bg" href="/tags/C/">C#</a>
+                    
+                      <a class="hover-with-bg" href="/tags/SkyApm-dotnet/">SkyApm-dotnet</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Apm/">Apm</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">作者：沛山<br>出处： <a href="http://www.liuthing.com" target="_blank" rel="noopener">http://www.liuthing.com</a> <br> 本文版权归作者所有有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接。希望能够持续的为大家带来好的技术文章，关注我吧！<br> <img style="width:100%; height:500px margin-top:15px;" src="http://liuthing.com/images/hexo01/qrcode.jpg" srcset="/img/loading.gif" alt="公众号：DotNetCore开源学习"></p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/05/18/dotnetcoredocker/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">让.NetCore程序跑在任何有docker的地方</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2020/05/14/microseversupportmongodb/">
+                        <span class="hidden-mobile">在微服务框架Demo.MicroServer中添加对MongoDB的支持</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <div class="comments" id="comments">
+                
+                
+  <div id="vcomments"></div>
+  <script type="text/javascript">
+    function loadValine() {
+      addScript('https://cdn.staticfile.org/valine/1.4.14/Valine.min.js', function () {
+        new Valine({
+          el: "#vcomments",
+          app_id: "JfSAuL4w4fcF33IoC85mH0xl-gzGzoHsz",
+          app_key: "uo0xL8US0yTQX55tV56brYh3",
+          placeholder: "吐槽",
+          path: window.location.pathname,
+          avatar: "retro",
+          meta: ["nick","mail","link"],
+          pageSize: "10",
+          lang: "zh-CN",
+          highlight: false,
+          recordIP: false,
+          serverURLs: "https://jfsaul4w.lc-cn-n1-shared.com",
+        });
+      });
+    }
+    createObserver(loadValine, 'vcomments');
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://valine.js.org" target="_blank" rel="nofollow noopener noopener">comments
+      powered by Valine.</a></noscript>
+
+
+              </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'true' === 'true',
+      loop: 'all',
+      order: 'list',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"年少有为","artist":"李荣浩","url":"/songs/nianshaoyouwei.mp3","cover":"/img/nianshaoyouwei.png"},{"name":"桃花诺","artist":"G.E.M-邓紫棋","url":"/songs/taohuanuo.mp3","cover":"/img/taohuanuo.png"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "在微服务框架Demo.MicroServer中添加SkyWalking+SkyApm-dotnet分布式链路追踪系统&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 100,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?0960db9acd004649f7fa979ca537a2f8";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+    <!-- Google Analytics -->
+    <script defer>
+      (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+          (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+          m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'UA-178263457-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+</body>
+</html>

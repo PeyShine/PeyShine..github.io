@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Peyshine">
+  <meta name="keywords" content="">
+  <title>Dockerfile+Jenkinsfile+GitLab轻松实现.NetCore程序的CI&amp;CD - 沛山博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>沛山博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-05-26 21:07">
+      2020年5月26日 晚上
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.7k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      20
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <h2 id="一-相关介绍"><a href="#一-相关介绍" class="headerlink" title="一.相关介绍"></a>一.相关介绍</h2><ol>
+<li><p>Dockerfile：关于Dockerfile的使用说明，我在文章《让.NetCore程序跑在任何有docker的地方》中有说到，这里不在赘述，需要的可以先看下，本文主要介绍Jenkinsfile结合dockerfile配合使用，自动构建.NetCore应用程序。</p>
+</li>
+<li><p>Jenkinsfile ：Jenkinsfile 是 Jenkins 2.x 或更高版本核心特性 Pipeline（流水线） 的脚本，或者说对于Jenkins 流水线的定义被写在一个叫Jenkinsfile的文本文件中，该文件可以被提交到项目的源代码的控制仓库。这是”流水线即代码”的基础; 将CD 流水线作为应用程序的一部分，像其他代码一样进行版本化和审查。 创建 <code>Jenkinsfile</code>并提交它到源代码控制中提供了以下几个好处:</p>
+<ul>
+<li>自动地为所有分支创建流水线构建过程并拉取请求。</li>
+<li>在流水线上代码复查/迭代 (以及剩余的源代码)。</li>
+<li>对流水线进行审计跟踪。</li>
+<li>该流水线的真正的源代码 , 可以被项目的多个成员查看和编辑。</li>
+</ul>
+</li>
+</ol>
+<p>Jenkinsfile 能使用两种语法进行编写，分别是“声明式”和“脚本化”，二者语法都是 DSL(Domain-specific language) 语言，二者语法差不多，下面我们具体看下</p>
+<h2 id="二-Jenkins和GitLab的安装"><a href="#二-Jenkins和GitLab的安装" class="headerlink" title="二.Jenkins和GitLab的安装"></a>二.Jenkins和GitLab的安装</h2><p>工欲善其事，必先利其器<br>Jenkins的安装可以看我之前的一篇文章：<a href="https://www.cnblogs.com/peyshine/p/12891935.html" target="_blank" rel="noopener">https://www.cnblogs.com/peyshine/p/12891935.html</a><br>Gitlab的安装推荐看下这篇文章：<a href="https://segmentfault.com/a/1190000021593151" target="_blank" rel="noopener">https://segmentfault.com/a/1190000021593151</a></p>
+<h2 id="三-打通GitLab-Webhooks与Jenkins流程"><a href="#三-打通GitLab-Webhooks与Jenkins流程" class="headerlink" title="三.打通GitLab Webhooks与Jenkins流程"></a>三.打通GitLab Webhooks与Jenkins流程</h2><ol>
+<li>这里先新建一个.net core应用程序，除了新增加了一个Jenkinsfile文件以外，其他没有任何代码的修改<br><img src="/images/cicd/1.png" srcset="/img/loading.gif" alt="1"></li>
+</ol>
+<p><strong>注意，Jenkinsfile的J需要大写，我测试了，小写会提示找不到文件.</strong><br>Jenkinsfile中添加了几行测试代码：</p>
+<pre><code class="hljs sqf">pipeline&#123;
+    <span class="hljs-built_in">agent</span> any
+    stages &#123;
+        stage(<span class="hljs-string">'Build'</span>) &#123;
+            steps&#123;
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">'This is a build step'</span> 
+            &#125;
+        &#125;
+        stage(<span class="hljs-string">'Test'</span>) &#123;
+            steps&#123;
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">'This is a test step'</span>  
+            &#125;
+        &#125;
+        stage(<span class="hljs-string">'Deploy'</span>) &#123;
+            steps&#123;
+                <span class="hljs-built_in">echo</span> <span class="hljs-string">'This is a deploy step'</span>    
+            &#125;
+        &#125;
+    &#125;
+&#125;</code></pre>
+<p>然后将程序文件push到Gitlab上</p>
+<ol start="2">
+<li><p>在Jenkins系统管理，系统配置中，在Gitlab处添加相关信息<br><img src="/images/cicd/2.png" srcset="/img/loading.gif" alt="2"><br><img src="/images/cicd/3.png" srcset="/img/loading.gif" alt="3"><br>下面点击添加凭据，类型选择GitLab Api Token，由于这个Token需要由GitLab来提供，所以先到GitLab生成一个Api Token</p>
+</li>
+<li><p>生成Api Token<br><img src="/images/cicd/4.png" srcset="/img/loading.gif" alt="4"><br><img src="/images/cicd/5.png" srcset="/img/loading.gif" alt="5"></p>
+</li>
+</ol>
+<p>点击创建之后，Token就生效了<br>将Api Token复制到Jenkins中，点击添加<br><img src="/images/cicd/6.png" srcset="/img/loading.gif" alt="6"></p>
+<p>添加完成后，就可以在Credentials中选择刚刚添加好的凭据<br><img src="/images/cicd/7.png" srcset="/img/loading.gif" alt="7"><br>点击保存，这样系统配置中的Gitlab的全局配置就生效了</p>
+<ol start="4">
+<li>新建流水线任务测试<br>下面打开Jenkins，新建一个流水线发布任务，取名test，然后点击确定.<br><img src="/images/cicd/8.png" srcset="/img/loading.gif" alt="8"></li>
+</ol>
+<p>勾选构建触发器<br><img src="/images/cicd/9.png" srcset="/img/loading.gif" alt="9"></p>
+<p>由于我们需要达到的目的是在GitLab提交代码，Jenkins可以自动构建相关任务，所以我们还需要配置一个触发器。如图，点击下面的”高级”按钮<br><img src="/images/cicd/10.png" srcset="/img/loading.gif" alt="10"></p>
+<p>点击“Generate”，生成一个SecretToken<br><img src="/images/cicd/10.1.png" srcset="/img/loading.gif" alt="10.1"></p>
+<p>然后再流水线Tab定义处，下拉选择“Pipeline script from SCM”，SCM选择Git，然后填写代码库的地址和访问用户密码，下面脚本路径有个Jenkinsfile，意思就是从我们提交到源代码管理根目录下面的Jenkinsfile中读取相关定义好的的流水线任务流程<br><img src="/images/cicd/11.png" srcset="/img/loading.gif" alt="11"><br>点击保存</p>
+<p>在Gitlab如下图地方进入，来配置web钩子<br><img src="/images/cicd/12.png" srcset="/img/loading.gif" alt="12"><br><img src="/images/cicd/15.png" srcset="/img/loading.gif" alt="15"><br>将在Jenkin中截图的一个url和生成的token分别填写在下方，在触发器的地方勾选上 Push events，然后点击下方的“Add webhook” 按钮。如果你还有其他事件发生时想触发Jenkins的任务，也可以自行勾选上</p>
+<p><img src="/images/cicd/16.png" srcset="/img/loading.gif" alt="16"><br>添加完成后点击测试<br><img src="/images/cicd/17.png" srcset="/img/loading.gif" alt="17"></p>
+<p>这个时候可以看到上方出现了成功的提示<br><img src="/images/cicd/18.png" srcset="/img/loading.gif" alt="18"></p>
+<p>而另一边Jenkins中，正在执行任务，并且任务的执行是 GitLab有推送任务<br><img src="/images/cicd/19.png" srcset="/img/loading.gif" alt="19"></p>
+<p> 完成之后，可以看到流水线任务流程图<br><img src="/images/cicd/21.png" srcset="/img/loading.gif" alt="21"></p>
+<p>下面通过代码推送来测一下，我在跟目录新建一个空的README.md文件，然后推送，推送完成后可以看到Jenkins开始执行第二次构建任务<br><img src="/images/cicd/22.png" srcset="/img/loading.gif" alt="22"></p>
+<p>至此，从GitLab提交代码到Jenkins自动构建的整个流程已经完成了，细心的你会发现，只是流程跑通了，这个Jenkinsfile没有实质性的内容，下面进入Jenkinsfile</p>
+<h2 id="四-接入Jenkinsfile，Dockerfile实现自动发布"><a href="#四-接入Jenkinsfile，Dockerfile实现自动发布" class="headerlink" title="四.接入Jenkinsfile，Dockerfile实现自动发布"></a>四.接入Jenkinsfile，Dockerfile实现自动发布</h2><p>编写Dockerfile如下：</p>
+<pre><code class="hljs dockerfile"><span class="hljs-keyword">FROM</span> mcr.microsoft.com/dotnet/core/sdk:<span class="hljs-number">3.1</span>-buster AS build
+<span class="hljs-keyword">COPY</span><span class="bash"> *.csproj ./app/</span>
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> dotnet restore</span>
+
+<span class="hljs-keyword">COPY</span><span class="bash"> . ./</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> dotnet publish -o out /p:PublishWithAspNetCoreTargetManifest=<span class="hljs-string">"false"</span></span>
+
+<span class="hljs-keyword">FROM</span> mcr.microsoft.com/dotnet/core/aspnet:<span class="hljs-number">3.1</span>-buster-slim AS runtime
+<span class="hljs-keyword">ENV</span> ASPNETCORE_URLS http://+:<span class="hljs-number">80</span>
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> --from=build /app/out ./</span>
+<span class="hljs-keyword">ENTRYPOINT</span><span class="bash"> [<span class="hljs-string">"dotnet"</span>, <span class="hljs-string">"WebApplication_Jenkinsfile.dll"</span>]</span></code></pre>
+
+<p>编写Jenkinsfile如下：</p>
+<pre><code class="hljs awk">pipeline&#123;
+    agent any
+    stages &#123;
+        stage(<span class="hljs-string">'Checkout'</span>) &#123;
+            steps&#123;
+            git credentialsId: <span class="hljs-string">'85ca7e47-532e-4901-9828-50a8da071d16'</span>, url: <span class="hljs-string">'http://xxx.gitlab.com/webapplication_jenkinsfile.git'</span>, branch:<span class="hljs-string">'master'</span>
+                    echo <span class="hljs-string">'---This is a Checkout step---'</span>                 
+            &#125;
+        &#125;
+        stage(<span class="hljs-string">'Build'</span>) &#123;
+            steps&#123;
+                    sh <span class="hljs-string">'''cd WebApplication_Jenkinsfile</span>
+<span class="hljs-string">            docker rmi -f docker_webapplication_test:1.0</span>
+<span class="hljs-string">            docker build -t docker_webapplication_test:1.0 .'''</span>
+            echo <span class="hljs-string">'---This is a Build step---'</span>
+            &#125;
+        &#125;
+        stage(<span class="hljs-string">'Run'</span>) &#123;
+            steps&#123;
+            sh <span class="hljs-string">'''docker rm -f docker_webapplication_test</span>
+<span class="hljs-string">            docker run --name docker_webapplication_test -d -p 7489:80 docker_webapplication_test:1.0</span>
+<span class="hljs-string">            '''</span>
+                    echo <span class="hljs-string">'---This is a run step---'</span>    
+            &#125;
+        &#125;
+    &#125;
+&#125;</code></pre>
+
+<p><strong>说明:</strong></p>
+<ul>
+<li>stages 必须，包括顺序执行的一个或多个stage命令，在pipeline内仅能使用一次，通常位于agent/options后面</li>
+<li>steps 必须，steps位于stage指令块内部，包括一个或多个step。仅有一个step的情况下可以忽略关键字step及其{}</li>
+</ul>
+<p>这里为了演示，只添加了几个核心的步骤，可以根据需要自行添加自动测试，邮件提醒等额外步骤</p>
+<p>流水线语法，可以参照下图中的示例步骤点击后，可以生成脚本信息，上面Jenkinsfile中的git credentialsId信息就是在这里生成的<br><img src="/images/cicd/23.png" srcset="/img/loading.gif" alt="23"></p>
+<p>完成之后，将Jenkinsfile和Dockerfile推送到Gitlab，推送成功可以看到如下图的Jenkins自动构建过程，并且遵照定义规范发布了应用<br><img src="/images/cicd/24.png" srcset="/img/loading.gif" alt="24"></p>
+<p>如果需要查看日志，或者在发布失败后查看失败原因，可以通过下面的 Console Output来查看<br><img src="/images/cicd/25.png" srcset="/img/loading.gif" alt="25"></p>
+<p>Console Output中的详细日志信息如下图，可以看到构建过程是遵循在Dockerfile中的定义<br><img src="/images/cicd/26.png" srcset="/img/loading.gif" alt="26"></p>
+<p>docker 容器运行状态检查<br><img src="/images/cicd/27.png" srcset="/img/loading.gif" alt="27"></p>
+<p>自动部署效果截图<br><img src="/images/cicd/28.png" srcset="/img/loading.gif" alt="28"></p>
+<h2 id="五-结束总结"><a href="#五-结束总结" class="headerlink" title="五.结束总结"></a>五.结束总结</h2><p>&nbsp;&nbsp;&nbsp;&nbsp;在定义web钩子的时候，我勾选的是push events，所以每次有提交代码到master，都会自动去走Jenkinsfile中的流水线任务，在实际生产中，如果不想这样操作，可以将持续集成流水线与持续发布流水线独立开来<br>其实只需要前期一次将Jenkins和Gitlab触发器打通之后，后面只需要在源代码中维护Dockerfile和Jenkinsfile即可，这是比较优雅的一种CI、CD方式，动手试试吧！</p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/CICD/">CICD</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/NetCore/">.NetCore</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Jenkins/">Jenkins</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Gitlab/">Gitlab</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Docker/">Docker</a>
+                    
+                      <a class="hover-with-bg" href="/tags/CI/">CI</a>
+                    
+                      <a class="hover-with-bg" href="/tags/CD/">CD</a>
+                    
+                      <a class="hover-with-bg" href="/tags/DevOps/">DevOps</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Dockerfile/">Dockerfile</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Jenkinsfile/">Jenkinsfile</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">作者：沛山<br>出处： <a href="http://www.liuthing.com" target="_blank" rel="noopener">http://www.liuthing.com</a> <br> 本文版权归作者所有有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接。希望能够持续的为大家带来好的技术文章，关注我吧！<br> <img style="width:100%; height:500px margin-top:15px;" src="http://liuthing.com/images/hexo01/qrcode.jpg" srcset="/img/loading.gif" alt="公众号：DotNetCore开源学习"></p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/06/03/hqteam/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">从一年前的1200多人优化到现在200多人，待在这样的技术团队是一种什么体验？</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2020/05/20/jenkinsinstall/">
+                        <span class="hidden-mobile">CI与CD之Docker上安装Jenkins</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <div class="comments" id="comments">
+                
+                
+  <div id="vcomments"></div>
+  <script type="text/javascript">
+    function loadValine() {
+      addScript('https://cdn.staticfile.org/valine/1.4.14/Valine.min.js', function () {
+        new Valine({
+          el: "#vcomments",
+          app_id: "JfSAuL4w4fcF33IoC85mH0xl-gzGzoHsz",
+          app_key: "uo0xL8US0yTQX55tV56brYh3",
+          placeholder: "吐槽",
+          path: window.location.pathname,
+          avatar: "retro",
+          meta: ["nick","mail","link"],
+          pageSize: "10",
+          lang: "zh-CN",
+          highlight: false,
+          recordIP: false,
+          serverURLs: "https://jfsaul4w.lc-cn-n1-shared.com",
+        });
+      });
+    }
+    createObserver(loadValine, 'vcomments');
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://valine.js.org" target="_blank" rel="nofollow noopener noopener">comments
+      powered by Valine.</a></noscript>
+
+
+              </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'true' === 'true',
+      loop: 'all',
+      order: 'list',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"年少有为","artist":"李荣浩","url":"/songs/nianshaoyouwei.mp3","cover":"/img/nianshaoyouwei.png"},{"name":"桃花诺","artist":"G.E.M-邓紫棋","url":"/songs/taohuanuo.mp3","cover":"/img/taohuanuo.png"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Dockerfile+Jenkinsfile+GitLab轻松实现.NetCore程序的CI&CD&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 100,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?0960db9acd004649f7fa979ca537a2f8";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+    <!-- Google Analytics -->
+    <script defer>
+      (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+          (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+          m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'UA-178263457-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+</body>
+</html>

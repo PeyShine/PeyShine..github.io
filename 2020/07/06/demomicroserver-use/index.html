@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="Peyshine">
+  <meta name="keywords" content="">
+  <title>微服务框架Demo.MicroServer运行手册 - 沛山博客</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/github-gist.min.css" />
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_yg9cfy8wd6.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_pjno9b9zyxs.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>沛山博客</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/links/">
+                <i class="iconfont icon-link-fill"></i>
+                友链
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="view intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container text-center white-text fadeInUp">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              
+  <div class="mt-3 post-meta">
+    <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+    <time datetime="2020-07-06 22:33">
+      2020年7月6日 晚上
+    </time>
+  </div>
+
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      26
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <div class="post-content mx-auto" id="post">
+            
+            <article class="markdown-body">
+              <h2 id="一-背景说明："><a href="#一-背景说明：" class="headerlink" title="一.背景说明："></a>一.背景说明：</h2><p>之前分享过一个微服务开发框架， “<a href="http://liuthing.com/2020/05/10/demomicroserver/">享一个集成.NET Core+Swagger+Consul+Polly+Ocelot+IdentityServer4+Exceptionless+Apollo+SkyWalking的微服务开发框架</a>”，前两天在Github上收到一个Issues，是想我这边提供下完整的运行文档和配置文件，因为之前想法是弄清楚这几个东西的职责之后，对于运行的先后顺序，和需要的配置key应该都会有了解，所以README编写只是介绍了用到了哪些东西，没有说如何运行，但是既然有人问起，我还是满足一下，就当成是自己回顾了。</p>
+<h2 id="二-回顾下项目结构"><a href="#二-回顾下项目结构" class="headerlink" title="二.回顾下项目结构"></a>二.回顾下项目结构</h2><p><img src="/images/demomicroserver-use/projectStruct.png" srcset="/img/loading.gif" alt="struct"><br>项目结构比较简单：</p>
+<ul>
+<li>MicroServer.Instance文件夹下面存放的是微服务实例，至于微服务颗粒度的拆分得结合实际的业务情况</li>
+<li>Demo.MicroServer.IdentityServer4 统一鉴权中心</li>
+<li>Demo.MicroServer.Infrastructure 基础设施，可以自行在里面添加内容</li>
+<li>Demo.MicroServer.Ocelot  这一层是Api网关</li>
+<li>Demo.MicroServer.Repository 通用的数据访问层，包含MySQL，Mongo，Redis等，之所以抽离出来，是方便各个服务实例可是直接使用这些通用方法。</li>
+</ul>
+<p>而上面说的 “.NET Core+Swagger+Consul+Polly+Ocelot+IdentityServer4+Exceptionless+Apollo+SkyWalking” 中有几个东西还未出现，分别是 Consul，Polly，Exceptionless，Apollo，SkyWalking，这里还是分别介绍下</p>
+<ul>
+<li>Consul是一种服务网格解决方案，提供具有服务发现，健康检查，Key/Value存储，多数据中心等功能。在这里我们主要使用到服务发现，健康检查，启动场景是：微服务实例启动的时候</li>
+<li>Polly是.NET弹性和瞬态故障处理库，与Ocelot天然友好集成，使用也只需要在Ocelot 层添加少数配置即可使用</li>
+<li>Exceptionless是一款开源的实时的日志收集框架，可以使用在线或者本地搭建好的服务（如果只是本地测试建议直接使用在线的很方便），然后在微服务中配置好Url和应用的ApiKey就可以使用。</li>
+<li>Apollo是携程框架部门研发的分布式配置中心，能够集中化管理应用不同环境、不同集群的配置，配置修改后能够实时推送到应用端，并且具备规范的权限、流程治理等特性，适用于微服务配置管理场景，搭建好Apollo服务后，我们代码配置文件就可以变得相当干净了，只用留Apollo的配置就行，其他的配置几乎全部可以放在Apollo里面了。</li>
+<li>SkyWalking 关于SkyWalking 我有一篇文章专门介绍了这个，这里不在赘述，需要了解的可以查看：<a href="http://liuthing.com/2020/05/16/skywalking/">在微服务框架Demo.MicroServer中添加SkyWalking+SkyApm-dotnet分布式链路追踪系统</a> </li>
+</ul>
+<h2 id="三-安装启动微服务周边应用"><a href="#三-安装启动微服务周边应用" class="headerlink" title="三.安装启动微服务周边应用"></a>三.安装启动微服务周边应用</h2><p>在运行服务之前，你或许可以先安装或开启以下几个服务</p>
+<ol>
+<li>MySql </li>
+<li>Exceptionless<br> 如果还没安装可以参考：<a href="https://github.com/exceptionless/exceptionless/wiki/self-hosting" target="_blank" rel="noopener">https://github.com/exceptionless/exceptionless/wiki/self-hosting</a> ，建议使用docker安装</li>
+<li>apollo<br> 如果还没安装，可以参考：<a href="https://github.com/ApolloAuto/apollo/blob/master/docs/quickstart/apollo_software_installation_guide_cn.md" target="_blank" rel="noopener">https://github.com/ApolloAuto/apollo/blob/master/docs/quickstart/apollo_software_installation_guide_cn.md</a></li>
+<li>consul<br> 这个可以直接下载编译好的文件，直接启动就行<br> ./consul agent -dev -data-dir=/data/consul -node=agent-1 -client=0.0.0.0 -bind=10.34.5.101 -datacenter=demo</li>
+<li>Skywalking<br> 请参考我之前的文章：<a href="http://liuthing.com/2020/05/16/skywalking/">在微服务框架Demo.MicroServer中添加SkyWalking+SkyApm-dotnet分布式链路追踪系统</a></li>
+</ol>
+<p>咋一看这么多需要安装启动的是不是感觉很慌？<br>不用担心，其实如果先排除身份验证连数据库都不用读，可以只用安装consul就可以，至于apollo可以先将配置写在代码的配置文件中，对于将项目跑起来这点来说apollo不是必须的，日志收集也可以暂缓，性能检测也一样，我们可以先将核心的跑起来，再来完善他的周边，秉着这个思路，我们开始运行</p>
+<h2 id="四-开始启动"><a href="#四-开始启动" class="headerlink" title="四.开始启动"></a>四.开始启动</h2><ol>
+<li><h3 id="启动consul"><a href="#启动consul" class="headerlink" title="启动consul"></a>启动consul</h3><p>开发下我们可以这样启动consul服务：</p>
+<pre><code class="hljs routeros">./consul agent -dev <span class="hljs-attribute">-data-dir</span>=/data/consul <span class="hljs-attribute">-node</span>=agent-1 <span class="hljs-attribute">-client</span>=0.0.0.0 <span class="hljs-attribute">-bind</span>=10.34.5.101 <span class="hljs-attribute">-datacenter</span>=demo</code></pre>
+<p>启动之后的效果如图：<br><img src="/images/demomicroserver-use/consul.png" srcset="/img/loading.gif" alt="consul"></p>
+</li>
+<li><h3 id="启动三个微服务实例"><a href="#启动三个微服务实例" class="headerlink" title="启动三个微服务实例"></a>启动三个微服务实例</h3><pre><code class="hljs reasonml">dotnet <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Demo</span>.</span><span class="hljs-module"><span class="hljs-identifier">MicroServer</span>.</span><span class="hljs-module"><span class="hljs-identifier">UserService</span>.</span></span>dll --urls=<span class="hljs-string">"http://*:6891"</span> --ip=<span class="hljs-string">"本机ip"</span> --port=<span class="hljs-number">6891</span>
+dotnet <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Demo</span>.</span><span class="hljs-module"><span class="hljs-identifier">MicroServer</span>.</span><span class="hljs-module"><span class="hljs-identifier">UserService</span>.</span></span>dll --urls=<span class="hljs-string">"http://*:6892"</span> --ip=<span class="hljs-string">"本机ip"</span> --port=<span class="hljs-number">6892</span>
+dotnet <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Demo</span>.</span><span class="hljs-module"><span class="hljs-identifier">MicroServer</span>.</span><span class="hljs-module"><span class="hljs-identifier">UserService</span>.</span></span>dll --urls=<span class="hljs-string">"http://*:6893"</span> --ip=<span class="hljs-string">"本机ip"</span> --port=<span class="hljs-number">6893</span></code></pre>
+<p>这里演示，分别在6891，6892，6893三个端口启动用户的微服务实例，启动之后，consul就开始工作了，如图：<br><img src="/images/demomicroserver-use/consul_list.png" srcset="/img/loading.gif" alt="consul"></p>
+</li>
+</ol>
+<p>而Consul是如何发现服务的，其实得益于我们在服务里面添加的一个扩展:</p>
+<pre><code class="hljs cs"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> IApplicationBuilder <span class="hljs-title">UseConsul</span>(<span class="hljs-params"><span class="hljs-keyword">this</span> IApplicationBuilder app, IConfiguration configuration</span>)</span>
+<span class="hljs-function"></span>&#123;
+    ConsulClient _client = <span class="hljs-keyword">new</span> ConsulClient(c =&gt;
+    &#123;
+        c.Address = <span class="hljs-keyword">new</span> Uri(configuration[<span class="hljs-string">"Consul.ServerUrl"</span>]);
+        c.Datacenter = <span class="hljs-string">"Demo.MicroServer"</span>;
+    &#125;);
+
+    <span class="hljs-keyword">string</span> ip = configuration[<span class="hljs-string">"ip"</span>];
+    <span class="hljs-keyword">int</span> port = <span class="hljs-keyword">int</span>.Parse(configuration[<span class="hljs-string">"port"</span>]);
+    <span class="hljs-keyword">int</span> weight = <span class="hljs-keyword">string</span>.IsNullOrEmpty(configuration[<span class="hljs-string">"weight"</span>]) ? <span class="hljs-number">1</span> : <span class="hljs-keyword">int</span>.Parse(configuration[<span class="hljs-string">"weight"</span>]);
+
+    _client.Agent.ServiceRegister(<span class="hljs-keyword">new</span> AgentServiceRegistration()
+    &#123;
+        ID = <span class="hljs-string">"UserService-"</span> + Guid.NewGuid(),
+        Name = <span class="hljs-string">"Demo.MicroServer.UserService"</span>,
+        Address = ip,
+        Port = port,
+        Tags = <span class="hljs-keyword">new</span> <span class="hljs-keyword">string</span>[] &#123; <span class="hljs-keyword">string</span>.IsNullOrEmpty(configuration[<span class="hljs-string">"tags"</span>]) ? <span class="hljs-string">""</span> : configuration[<span class="hljs-string">"tags"</span>] &#125;,   <span class="hljs-comment">//标签</span>
+        Check = <span class="hljs-keyword">new</span> AgentServiceCheck()                                                                     <span class="hljs-comment">//健康检查</span>
+        &#123;
+            Interval = TimeSpan.FromSeconds(<span class="hljs-number">10</span>),                                                            <span class="hljs-comment">//每隔多久检测一次</span>
+            HTTP = <span class="hljs-string">$"http://<span class="hljs-subst">&#123;ip&#125;</span>:<span class="hljs-subst">&#123;port&#125;</span>/api/health/check"</span>,
+            Timeout = TimeSpan.FromSeconds(<span class="hljs-number">5</span>),
+            DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(<span class="hljs-number">60</span>)                                       <span class="hljs-comment">//在遇到异常后关闭自身服务通道</span>
+        &#125;
+    &#125;);
+
+    <span class="hljs-keyword">return</span> app;
+&#125;</code></pre>
+<p>并在StartUp.cs中使用了他：app.UseConsul(Configuration);</p>
+<p>其实到这里，项目就已经跑起来了，并且具备初步的负载均衡功能，我们可以通过这三个端口其中任意一个来调用服务都是可以的。凡是都有但是，难道要人为去配置什么场景使用哪个ip和端口的服务吗，或者说要将我们所有的服务都暴露出去吗，每个服务都加一套登录鉴权机制吗？想想都觉得很可怕，那么怎么解决这个问题呢，答案就是.Net 中常用的APi GateWay之：Ocelot</p>
+<ol start="3">
+<li><h3 id="启动网关Ocelot"><a href="#启动网关Ocelot" class="headerlink" title="启动网关Ocelot"></a>启动网关Ocelot</h3></li>
+</ol>
+<p>开始启动Ocelot层：dotnet Demo.MicroServer.Ocelot.dll<br>网关启动之后就可以通过网关的ip去访问任意被注册过的服务，前提是在网关层中有配置好协议，以下面两个为例子，一个是swagger，一个是用户服务</p>
+<pre><code class="hljs actionscript"><span class="hljs-comment">//swagger</span>
+&#123;
+  <span class="hljs-string">"DownstreamPathTemplate"</span>: <span class="hljs-string">"/doc/Demo.MicroServer.UserService/swagger.json"</span>,
+  <span class="hljs-string">"DownstreamScheme"</span>: <span class="hljs-string">"http"</span>,
+  <span class="hljs-string">"ServiceName"</span>: <span class="hljs-string">"Demo.MicroServer.UserService"</span>,
+  <span class="hljs-string">"LoadBalancer"</span>: <span class="hljs-string">"RoundRobin"</span>,
+  <span class="hljs-string">"UseServiceDiscovery"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-string">"UpstreamPathTemplate"</span>: <span class="hljs-string">"/doc/Demo.MicroServer.UserService/swagger.json"</span>,
+  <span class="hljs-string">"UpstreamHttpMethod"</span>: [ <span class="hljs-string">"GET"</span>, <span class="hljs-string">"POST"</span>, <span class="hljs-string">"DELETE"</span>, <span class="hljs-string">"PUT"</span> ]
+&#125;,
+<span class="hljs-comment">//UserService</span>
+&#123;
+  <span class="hljs-string">"DownstreamPathTemplate"</span>: <span class="hljs-string">"/api/&#123;url&#125;"</span>,
+  <span class="hljs-string">"DownstreamScheme"</span>: <span class="hljs-string">"http"</span>,
+  <span class="hljs-string">"UpstreamPathTemplate"</span>: <span class="hljs-string">"/api/&#123;url&#125;"</span>,
+  <span class="hljs-string">"UpstreamHttpMethod"</span>: [ <span class="hljs-string">"Get"</span>, <span class="hljs-string">"Post"</span>, <span class="hljs-string">"DELETE"</span>, <span class="hljs-string">"PUT"</span> ],
+  <span class="hljs-string">"ServiceName"</span>: <span class="hljs-string">"Demo.MicroServer.UserService"</span>,
+  <span class="hljs-string">"UseServiceDiscovery"</span>: <span class="hljs-literal">true</span>,
+  <span class="hljs-string">"LoadBalancerOptions"</span>: &#123;
+    <span class="hljs-string">"Type"</span>: <span class="hljs-string">"RoundRobin"</span>
+&#125;,</code></pre>
+<p>由于每个服务中都已经配置好了swagger文档，所以这里只需要指定路由协议，一样的可以通过网关来访问swagger<br>这里可以通过网关的ip和端口访问swagger和userservice服务</p>
+<p>截止到这里服务的注册与发现还有网关的上下游配置基本完成，但是围绕在网关层的东西有很多，例如缓存，限流，熔断器，在网关层统一鉴权等等，但是这些不是当前要讨论的，这个具体根据后续反馈再看是否要单独拿出来解释.</p>
+<h2 id="五-Apoll配置"><a href="#五-Apoll配置" class="headerlink" title="五.Apoll配置"></a>五.Apoll配置</h2><p>上面介绍了运行启动流程，根据需求，这里也贴一下apollo总的配置项，而网关层和用户服务层的配置在appsetting中有配置，代码中已经都有了，这里着重贴下apollo中的配置</p>
+<ol>
+<li><p>Demo.MicroServer.Ocelot 层在apollo中的配置:</p>
+<pre><code class="hljs stylus">Swagger<span class="hljs-selector-class">.ServiceDocNames</span> = Demo<span class="hljs-selector-class">.MicroServer</span><span class="hljs-selector-class">.UserService</span>,Demo<span class="hljs-selector-class">.MicroServer</span>.ProductService
+IdentityService4<span class="hljs-selector-class">.Uri</span> = http:<span class="hljs-comment">//localhost:5000</span>
+IdentityService4<span class="hljs-selector-class">.UseHttps</span> = false</code></pre>
+<p>如图：<br><img src="/images/demomicroserver-use/apollo_ocelot.png" srcset="/img/loading.gif" alt="apollo"></p>
+</li>
+<li><p>Demo.MicroServer.UserService 层在apollo中的配置:</p>
+<pre><code class="hljs ini"><span class="hljs-attr">MySqlConnections</span> = server=mysql_ip<span class="hljs-comment">;port=3306;database=demo_microserver;User Id=root;pwd=123456;charset=utf8</span>
+<span class="hljs-attr">Swagger.Name</span> = Demo.MicroServer.UserService
+<span class="hljs-attr">Swagger.Version</span> = v1
+<span class="hljs-attr">Swagger.DocName</span> = Demo.MicroServer.UserService
+<span class="hljs-attr">Swagger.Title</span> = Api interface documentation
+<span class="hljs-attr">Swagger.Description</span> = See below for specific interface
+<span class="hljs-attr">Swagger.Contact.Name</span> = PeyShine
+<span class="hljs-attr">Swagger.Contact.Email</span> = PeyShine@qq.COM
+<span class="hljs-attr">Swagger.XmlFile</span> = Demo.MicroServer.UserService.xml
+<span class="hljs-attr">Exceptionless.ApiKey</span> = LmqMIxSTW0U68pKwJ3xXqrNrLqS6oEociW7OexNt
+<span class="hljs-attr">Exceptionless.ServerUrl</span> = http://exceptionless_ip:<span class="hljs-number">5000</span>
+<span class="hljs-attr">Consul.ServerUrl</span> = http://consul_ip:<span class="hljs-number">8500</span>
+<span class="hljs-attr">MongoDB.DefaultConnection</span> = mongodb://dev:Aa123456@mongo_ip/demo_db
+<span class="hljs-attr">MongoDB.DefaultDatabase</span> = demo_db
+<span class="hljs-attr">MongoDB.DefaultTable</span> = users</code></pre>
+<p>如图:<br><img src="/images/demomicroserver-use/apollo_userservice.png" srcset="/img/loading.gif" alt="apollo"></p>
+</li>
+</ol>
+<h2 id="六-总结"><a href="#六-总结" class="headerlink" title="六.总结"></a>六.总结</h2><p>本文作为文章”<a href="http://liuthing.com/2020/05/10/demomicroserver/">分享一个集成.NET Core+Swagger+Consul+Polly+Ocelot+IdentityServer4+Exceptionless+Apollo+SkyWalking的微服务开发框架</a>“的一个补充扩展，主要是介绍如何一步步启动Demo.MicroServer微服务框架，里面关于网关还有IdentityServer4没有进行深入讨论，想法是只要能先将项目核心部分跑起来，周边应用可以自行添加，后续再根据反馈是否要更加详细的去介绍。<br>其实理解了几个开源项目自己的职责之后，对运行流程就不难理解了，动手试试吧!</p>
+<p>文章代码在Github中的地址：<a href="https://github.com/PeyShine/Demo.MicroServer" target="_blank" rel="noopener">https://github.com/PeyShine/Demo.MicroServer</a>,欢迎star</p>
+
+            </article>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a>
+                    
+                      <a class="hover-with-bg" href="/tags/NetCore/">.NetCore</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Swagger/">Swagger</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Consul/">Consul</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Polly/">Polly</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Ocelot/">Ocelot</a>
+                    
+                      <a class="hover-with-bg" href="/tags/IdentityServer4/">IdentityServer4</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Exceptionless/">Exceptionless</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Apollo/">Apollo</a>
+                    
+                      <a class="hover-with-bg" href="/tags/SkyWalking/">SkyWalking</a>
+                    
+                      <a class="hover-with-bg" href="/tags/SkyWalking-dotnet/">SkyWalking-dotnet</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">作者：沛山<br>出处： <a href="http://www.liuthing.com" target="_blank" rel="noopener">http://www.liuthing.com</a> <br> 本文版权归作者所有有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接。希望能够持续的为大家带来好的技术文章，关注我吧！<br> <img style="width:100%; height:500px margin-top:15px;" src="http://liuthing.com/images/hexo01/qrcode.jpg" srcset="/img/loading.gif" alt="公众号：DotNetCore开源学习"></p>
+              
+              
+                <div class="post-prevnext row">
+                  <div class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/07/30/share01/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">珍藏多年的学习资料300G+，全部免费赠送，从此离大神又近了一步</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </div>
+                  <div class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/01/hexo03/">
+                        <span class="hidden-mobile">Hexo快速构建个人小站-Fulid主题下添加Valine评论系统(三)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </div>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <div class="comments" id="comments">
+                
+                
+  <div id="vcomments"></div>
+  <script type="text/javascript">
+    function loadValine() {
+      addScript('https://cdn.staticfile.org/valine/1.4.14/Valine.min.js', function () {
+        new Valine({
+          el: "#vcomments",
+          app_id: "JfSAuL4w4fcF33IoC85mH0xl-gzGzoHsz",
+          app_key: "uo0xL8US0yTQX55tV56brYh3",
+          placeholder: "吐槽",
+          path: window.location.pathname,
+          avatar: "retro",
+          meta: ["nick","mail","link"],
+          pageSize: "10",
+          lang: "zh-CN",
+          highlight: false,
+          recordIP: false,
+          serverURLs: "https://jfsaul4w.lc-cn-n1-shared.com",
+        });
+      });
+    }
+    createObserver(loadValine, 'vcomments');
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://valine.js.org" target="_blank" rel="nofollow noopener noopener">comments
+      powered by Valine.</a></noscript>
+
+
+              </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+    <!-- APlayer 音乐播放器 -->
+    <div id="aplayer"></div>
+    <script defer src="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.js" ></script>
+<link  rel="stylesheet" href="https://cdn.staticfile.org/aplayer/1.10.1/APlayer.min.css" />
+<script type="text/javascript">
+  var oldLoadAp = window.onload;
+  window.onload = function () {
+    oldLoadAp && oldLoadAp();
+
+    new APlayer({
+      container: document.getElementById('aplayer'),
+      fixed: true,
+      autoplay: 'true' === 'true',
+      loop: 'all',
+      order: 'list',
+      theme: '#b7daff',
+      preload: 'none',
+      audio: [{"name":"年少有为","artist":"李荣浩","url":"/songs/nianshaoyouwei.mp3","cover":"/img/nianshaoyouwei.png"},{"name":"桃花诺","artist":"G.E.M-邓紫棋","url":"/songs/taohuanuo.mp3","cover":"/img/taohuanuo.png"}]
+    });
+  }
+</script>
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+  <div class="statistics">
+    
+    
+
+    
+      
+        <!-- 不蒜子统计PV -->
+        <span id="busuanzi_container_site_pv" style="display: none">
+            总访问量 
+            <span id="busuanzi_value_site_pv"></span>
+             次
+          </span>
+      
+      
+        <!-- 不蒜子统计UV -->
+        <span id="busuanzi_container_site_uv" style="display: none">
+            总访客数 
+            <span id="busuanzi_value_site_uv"></span>
+             人
+          </span>
+      
+    
+  </div>
+
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: 'article.markdown-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "微服务框架Demo.MicroServer运行手册&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 100,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <!-- Baidu Analytics -->
+    <script defer>
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?0960db9acd004649f7fa979ca537a2f8";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+  
+
+  
+    <!-- Google Analytics -->
+    <script defer>
+      (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        i[r] = i[r] || function () {
+          (i[r].q = i[r].q || []).push(arguments)
+        }, i[r].l = 1 * new Date();
+        a = s.createElement(o),
+          m = s.getElementsByTagName(o)[0];
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m)
+      })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+      ga('create', 'UA-178263457-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+</body>
+</html>
